@@ -56,14 +56,14 @@ public class DataSourceAspect {
      * @return {@link Optional }<{@link DataSource }>
      */
     private Optional<DataSource> getDataSourceAnnotation(JoinPoint joinPoint) {
-        // 获取目标类上的注解
-        DataSource dataSource = joinPoint.getTarget().getClass().getAnnotation(DataSource.class);
-        if (dataSource != null) {
-            return Optional.of(dataSource);
+        // 优先获取方法上的注解
+        DataSource methodDataSource = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(DataSource.class);
+        if (methodDataSource != null) {
+            return Optional.of(methodDataSource);
         }
-
-        // 获取目标方法上的注解
-        return Optional.ofNullable(
-                ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(DataSource.class));
+        // 再获取类上的注解
+        DataSource classDataSource = joinPoint.getTarget().getClass().getAnnotation(DataSource.class);
+        return Optional.ofNullable(classDataSource);
     }
+
 }
